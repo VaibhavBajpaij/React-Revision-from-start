@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        position: relative;
+        min-height: 100vh;
+      }
+      
+      .currency-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: radial-gradient(circle at center, #1a2a6c, #b21f1f, #fdbb2d);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        overflow: hidden;
+      }
+      
+      .currency-symbol {
+        position: absolute;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        opacity: 0;
+        text-shadow: 0 0 5px rgba(0,0,0,0.3);
+        animation: float 15s infinite linear;
+      }
+      
+      .currency-line {
+        position: absolute;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+        transform-origin: left center;
+        animation: scan 8s infinite linear;
+      }
+      
+      @keyframes float {
+        0% {
+          transform: translateY(100vh) rotate(0deg) scale(0.5);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.9;
+          transform: scale(1);
+        }
+        90% {
+          opacity: 0.9;
+        }
+        100% {
+          transform: translateY(-100px) rotate(360deg) scale(0.5);
+          opacity: 0;
+        }
+      }
+      
+      @keyframes scan {
+        0% {
+          transform: rotate(0deg) translateX(-100%);
+          width: 0;
+        }
+        50% {
+          width: 100vw;
+        }
+        100% {
+          transform: rotate(0deg) translateX(100%);
+          width: 0;
+        }
+      }
+      
+      @keyframes gradientBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      
+      .exchange-icon {
+        position: absolute;
+        opacity: 0;
+        animation: pulse 12s infinite ease-in-out;
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(0.8) rotate(0deg);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.2) rotate(180deg);
+          opacity: 0.4;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="currency-bg" id="currencyBackground"></div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const bg = document.getElementById('currencyBackground');
+        const symbols = ['$', '€', '£', '¥', '₹', '₽', '₩', '₿', '¢', '₫', '₴'];
+        const colors = [
+          '#FFD700', '#4FC3F7', '#FF5252', '#7C4DFF', 
+          '#FF4081', '#00E676', '#FF9100', '#536DFE',
+          '#F50057', '#00B0FF', '#76FF03'
+        ];
+        
+        // Create animated currency symbols
+        function createSymbol() {
+          const symbol = document.createElement('div');
+          symbol.className = 'currency-symbol';
+          symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+          
+          // Random properties
+          const size = Math.random() * 30 + 20;
+          symbol.style.fontSize = `${size}px`;
+          symbol.style.left = `${Math.random() * 100}vw`;
+          
+          const duration = Math.random() * 15 + 10;
+          const delay = Math.random() * 5;
+          symbol.style.animation = `float ${duration}s ${delay}s infinite linear`;
+          
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          symbol.style.color = color;
+          symbol.style.textShadow = `0 0 10px ${color}, 0 0 20px rgba(255,255,255,0.5)`;
+          
+          bg.appendChild(symbol);
+          
+          setTimeout(() => {
+            symbol.remove();
+          }, (duration + delay) * 1000);
+        }
+        
+        // Create scanning lines
+        function createLine() {
+          const line = document.createElement('div');
+          line.className = 'currency-line';
+          
+          line.style.top = `${Math.random() * 100}vh`;
+          line.style.width = `${Math.random() * 100 + 50}px`;
+          
+          const duration = Math.random() * 10 + 5;
+          const delay = Math.random() * 3;
+          line.style.animation = `scan ${duration}s ${delay}s infinite linear`;
+          
+          const angle = Math.random() * 30 - 15;
+          line.style.transform = `rotate(${angle}deg)`;
+          
+          bg.appendChild(line);
+          
+          setTimeout(() => {
+            line.remove();
+          }, (duration + delay) * 1000);
+        }
+        
+        // Create exchange icons
+        function createExchangeIcon() {
+          const icon = document.createElement('div');
+          icon.className = 'exchange-icon';
+          icon.innerHTML = `
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 10L20 14L16 18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <path d="M8 6L4 10L8 14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <path d="M4 14H20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <path d="M20 10H4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          `;
+          
+          icon.style.left = `${Math.random() * 90 + 5}vw`;
+          icon.style.top = `${Math.random() * 90 + 5}vh`;
+          
+          const duration = Math.random() * 8 + 8;
+          const delay = Math.random() * 5;
+          icon.style.animation = `pulse ${duration}s ${delay}s infinite ease-in-out`;
+          
+          bg.appendChild(icon);
+          
+          setTimeout(() => {
+            icon.remove();
+          }, (duration + delay) * 1000);
+        }
+        
+        // Create initial elements
+        for (let i = 0; i < 25; i++) createSymbol();
+        for (let i = 0; i < 10; i++) createLine();
+        for (let i = 0; i < 8; i++) createExchangeIcon();
+        
+        // Continue creating elements periodically
+        setInterval(createSymbol, 800);
+        setInterval(createLine, 2000);
+        setInterval(createExchangeIcon, 3000);
+      });
+    </script>
+  </body>
+</html>
